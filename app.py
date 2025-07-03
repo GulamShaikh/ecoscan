@@ -1,10 +1,64 @@
 import streamlit as st
 import requests
 
+# Page config for favicon and centered layout
 st.set_page_config(page_title="EcoScan", page_icon="🌿", layout="centered")
-st.title("🌿 EcoScan – Plastic-Free Product Checker")
-st.write("Scan or enter a product name below to check eco-friendliness and get greener alternatives.")
 
+# Inject custom CSS for gradient background, header, and footer
+st.markdown("""
+    <style>
+    body {
+        background: linear-gradient(135deg, #e8f5e9, #c8e6c9, #a5d6a7);
+        font-family: 'Segoe UI', sans-serif;
+    }
+    .header {
+        text-align: center;
+        padding: 20px 0;
+    }
+    .header img {
+        width: 80px;
+        margin-bottom: 10px;
+    }
+    .header h1 {
+        color: #1b5e20;
+        margin: 0;
+        font-size: 2.2rem;
+    }
+    .footer {
+        text-align: center;
+        font-size: 0.9rem;
+        color: #4e944f;
+        margin-top: 60px;
+        padding-bottom: 20px;
+    }
+    .stTextInput > label {
+        font-weight: bold;
+        color: #2e7d32;
+    }
+    .stButton button {
+        background-color: #2e7d32;
+        color: white;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+    }
+    .stButton button:hover {
+        background-color: #1b5e20;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# Header with logo & title
+st.markdown("""
+    <div class="header">
+        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="EcoScan Logo">
+        <h1>EcoScan</h1>
+        <p>🌱 Plastic-Free Product Checker – Scan or type to check eco-friendliness!</p>
+    </div>
+""", unsafe_allow_html=True)
+
+# Input fields
 product_name = st.text_input("Enter product name", placeholder="e.g., Plastic Shampoo Bottle")
 
 uploaded_image = st.file_uploader("Or upload product image (for simulation only)", type=["jpg", "png"])
@@ -20,7 +74,7 @@ if st.button("🔍 Scan Now"):
         st.warning("Please enter a product name or upload an image.")
         st.stop()
 
-    st.info(f"Scanning: **{final_product}**")
+    st.info(f"🔎 Scanning: **{final_product}**")
     with st.spinner("Analyzing eco-friendliness with AI..."):
         endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyDDKZL72D96iuI9codSXHWS11eKI9a06ek"
         headers = {"Content-Type": "application/json"}
@@ -42,3 +96,10 @@ if st.button("🔍 Scan Now"):
             st.markdown(result.replace("\n", "<br>"), unsafe_allow_html=True)
         else:
             st.error("❌ API request failed. Check API key or quota.")
+
+# Footer with credits or contact info
+st.markdown("""
+    <div class="footer">
+        Created by EcoScan Team • <a href="https://streamlit.io" target="_blank" style="color:#1b5e20; text-decoration:underline;">Powered by Streamlit</a>
+    </div>
+""", unsafe_allow_html=True)
