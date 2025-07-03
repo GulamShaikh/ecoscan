@@ -7,46 +7,50 @@ st.set_page_config(page_title="EcoScan", page_icon="🌿", layout="centered")
 # Inject custom CSS for gradient background, header, and footer
 st.markdown("""
     <style>
-    body {
-        background: linear-gradient(135deg, #e8f5e9, #c8e6c9, #a5d6a7);
-        font-family: 'Segoe UI', sans-serif;
-    }
-    .header {
-        text-align: center;
-        padding: 20px 0;
-    }
-    .header img {
-        width: 80px;
-        margin-bottom: 10px;
-    }
-    .header h1 {
-        color: #1b5e20;
-        margin: 0;
-        font-size: 2.2rem;
-    }
-    .footer {
-        text-align: center;
-        font-size: 0.9rem;
-        color: #4e944f;
-        margin-top: 60px;
-        padding-bottom: 20px;
-    }
-    .stTextInput > label {
-        font-weight: bold;
-        color: #2e7d32;
-    }
-    .stButton button {
-        background-color: #2e7d32;
-        color: white;
-        border-radius: 8px;
-        padding: 10px 20px;
-        font-weight: bold;
-        transition: background-color 0.3s ease;
-    }
-    .stButton button:hover {
-        background-color: #1b5e20;
-    }
-    </style>
+body {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9, #a5d6a7);
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+}
+.container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+}
+.header img {
+    width: 70px;
+    animation: pulse 2s infinite alternate;
+}
+.stTextInput input, .stFileUploader input {
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 16px;
+}
+.stButton button {
+    background-color: #2e7d32;
+    color: white;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: bold;
+    font-size: 1rem;
+}
+.stButton button:hover {
+    background-color: #1b5e20;
+    transition: 0.3s ease;
+}
+.footer {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #4e944f;
+    margin-top: 40px;
+    padding-bottom: 20px;
+}
+@keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.1); }
+}
+</style>
+
 """, unsafe_allow_html=True)
 
 # Header with logo & title
