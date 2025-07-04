@@ -1,8 +1,21 @@
+import os
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 import requests
-import os
+
+# Fetch Hugging Face token safely
+hf_token = os.environ.get("HF_TOKEN")
+
+if not hf_token:
+    st.error("""
+    ❌ **Hugging Face API token missing!**
+    
+    Please set the HF_TOKEN environment variable locally or in Streamlit Cloud Secrets.
+    """)
+    st.stop()
+
+HF_HEADERS = {"Authorization": f"Bearer {hf_token}"}
 
 # Page config with custom theme
 st.set_page_config(page_title="EcoScan", page_icon="🌿", layout="wide")
@@ -99,8 +112,6 @@ with tab1:
 
         with st.spinner("Analyzing with Hugging Face AI..."):
             HF_API_URL = "https://api-inference.huggingface.co/models/distilbert-base-uncased-finetuned-sst-2-english"
-            HF_HEADERS = {"Authorization": f"Bearer {os.environ['HF_TOKEN']}"}
-
             payload = {"inputs": final_product}
             response = requests.post(HF_API_URL, headers=HF_HEADERS, json=payload)
 
