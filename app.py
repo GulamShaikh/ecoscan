@@ -5,7 +5,7 @@ import plotly.express as px
 import requests
 
 # Fetch Hugging Face token safely
-hf_token = os.environ.get("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")
+hf_token = os.environ.get("HF_TOKEN")
 
 if not hf_token:
     st.error("""
