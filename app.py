@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import requests
 
 # Page config with custom theme
 st.set_page_config(page_title="EcoScan", page_icon="🌿", layout="wide")
@@ -74,9 +75,9 @@ with tab1:
     st.markdown('<div class="tab-container">', unsafe_allow_html=True)
     st.header("Scan Your Product")
 
-    col1, col2 = st.columns([1,1])
+    col1, col2 = st.columns([1, 1])
     with col1:
-        uploaded_image = st.file_uploader("Upload product image (JPG, PNG)", type=["jpg","png"])
+        uploaded_image = st.file_uploader("Upload product image (JPG, PNG)", type=["jpg", "png"])
     with col2:
         product_name = st.text_input("Or search by product name", placeholder="e.g., Herbal Shampoo, BIC Pen")
 
@@ -94,16 +95,35 @@ with tab1:
             st.stop()
 
         st.info(f"🔎 Scanning: **{final_product}**")
-        with st.spinner("Simulating eco-friendliness analysis..."):
-            # Simulated AI response
-            result = f"""
-            <h3>🔎 Eco-Friendliness Analysis for '{final_product}'</h3>
-            <p><b>Score:</b> 35/100 (Not eco-friendly)</p>
-            <p><b>Reason:</b> Likely single-use plastic, harming the environment.</p>
-            <p><b>Greener Alternatives:</b> Use bamboo or steel alternatives.</p>
+
+        with st.spinner("Analyzing with Hugging Face AI..."):
+            HF_API_URL = "https://api-inference.huggingface.co/models/distilbert-base-uncased-finetuned-sst-2-english"
+            HF_HEADERS = {"Authorization": "Bearer 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"}
+
+            payload = {"inputs": final_product}
+            response = requests.post(HF_API_URL, headers=HF_HEADERS, json=payload)
+
+        if response.status_code == 200:
+            result = response.json()
+            label = result[0]['label']
+            score = result[0]['score']
+            eco_score = round(score * 100, 1)
+
+            st.success("✅ Analysis Complete!")
+            analysis_html = f"""
+            <h3>🔎 AI Analysis for '{final_product}'</h3>
+            <p><b>Sentiment Label:</b> {label}</p>
+            <p><b>Confidence Score:</b> {eco_score}%</p>
             """
-            st.success("✅ Scan Complete!")
-            st.markdown(result, unsafe_allow_html=True)
+
+            if label == "POSITIVE":
+                analysis_html += "<p><b>Eco-Insight:</b> Product likely perceived as eco-friendly or sustainable.</p>"
+            else:
+                analysis_html += "<p><b>Eco-Insight:</b> Product may not be eco-friendly — consider alternatives.</p>"
+
+            st.markdown(analysis_html, unsafe_allow_html=True)
+        else:
+            st.error(f"❌ API request failed: {response.status_code} - {response.text}")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
