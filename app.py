@@ -4,23 +4,13 @@ import pandas as pd
 import plotly.express as px
 import requests
 
-# Fetch Hugging Face token safely
-hf_token = os.environ.get("HF_TOKEN")
+# ----------------- CONFIG -----------------
+GEMINI_API_KEY = "AIzaSyAQzuDxKGOr89g003wW5H5ROhd5kLy_HcI"  # Your Gemini API key here
+GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
 
-if not hf_token:
-    st.error("""
-    ❌ **Hugging Face API token missing!**
-    
-    Please set the HF_TOKEN environment variable locally or in Streamlit Cloud Secrets.
-    """)
-    st.stop()
-
-HF_HEADERS = {"Authorization": f"Bearer {hf_token}"}
-
-# Page config with custom theme
+# ----------------- PAGE SETTINGS -----------------
 st.set_page_config(page_title="EcoScan", page_icon="🌿", layout="wide")
 
-# Custom CSS
 st.markdown("""
 <style>
 body {
@@ -34,10 +24,6 @@ h1, h2, h3 {
 .header {
     text-align: center;
     margin-top: 20px;
-}
-.tabs .css-1v0mbdj {   /* Adjust Streamlit tab spacing */
-    margin-left: 10px;
-    margin-right: 10px;
 }
 .tab-container {
     background-color: white;
@@ -72,7 +58,7 @@ h1, h2, h3 {
 </style>
 """, unsafe_allow_html=True)
 
-# Header section
+# ----------------- HEADER -----------------
 st.markdown("""
 <div class="header">
     <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" width="80">
@@ -81,10 +67,10 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Tabs for sections
+# ----------------- TABS -----------------
 tab1, tab2, tab3 = st.tabs(["📷 Scan", "📜 History", "🏆 Leaderboard"])
 
-# -------------------- Tab 1: Scan
+# ----------------- TAB 1: SCAN -----------------
 with tab1:
     st.markdown('<div class="tab-container">', unsafe_allow_html=True)
     st.header("Scan Your Product")
@@ -110,36 +96,22 @@ with tab1:
 
         st.info(f"🔎 Scanning: **{final_product}**")
 
-        with st.spinner("Analyzing with Hugging Face AI..."):
-            HF_API_URL = "https://api-inference.huggingface.co/models/distilbert-base-uncased-finetuned-sst-2-english"
-            payload = {"inputs": final_product}
-            response = requests.post(HF_API_URL, headers=HF_HEADERS, json=payload)
+        with st.spinner("Analyzing with Gemini AI..."):
+            prompt = f"Is the product '{final_product}' eco-friendly? Provide a short analysis, a score from 0-100, and greener alternatives."
+            payload = {"contents": [{"parts": [{"text": prompt}]}]}
+            response = requests.post(GEMINI_API_URL, json=payload)
 
         if response.status_code == 200:
             result = response.json()
-            label = result[0]['label']
-            score = result[0]['score']
-            eco_score = round(score * 100, 1)
-
+            generated_text = result['candidates'][0]['content']['parts'][0]['text']
             st.success("✅ Analysis Complete!")
-            analysis_html = f"""
-            <h3>🔎 AI Analysis for '{final_product}'</h3>
-            <p><b>Sentiment Label:</b> {label}</p>
-            <p><b>Confidence Score:</b> {eco_score}%</p>
-            """
-
-            if label == "POSITIVE":
-                analysis_html += "<p><b>Eco-Insight:</b> Product likely perceived as eco-friendly or sustainable.</p>"
-            else:
-                analysis_html += "<p><b>Eco-Insight:</b> Product may not be eco-friendly — consider alternatives.</p>"
-
-            st.markdown(analysis_html, unsafe_allow_html=True)
+            st.markdown(f"<h3>🔎 Gemini Analysis for '{final_product}'</h3><p>{generated_text}</p>", unsafe_allow_html=True)
         else:
             st.error(f"❌ API request failed: {response.status_code} - {response.text}")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-# -------------------- Tab 2: History
+# ----------------- TAB 2: HISTORY -----------------
 with tab2:
     st.markdown('<div class="tab-container">', unsafe_allow_html=True)
     st.header("Your Scan History")
@@ -152,7 +124,7 @@ with tab2:
     st.table(history_data)
     st.markdown('</div>', unsafe_allow_html=True)
 
-# -------------------- Tab 3: Leaderboard
+# ----------------- TAB 3: LEADERBOARD -----------------
 with tab3:
     st.markdown('<div class="tab-container">', unsafe_allow_html=True)
     st.header("Top Eco Heroes 🌍")
@@ -166,7 +138,7 @@ with tab3:
     st.plotly_chart(fig, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-# Footer
+# ----------------- FOOTER -----------------
 st.markdown("""
     <div class="footer">
         Made with ❤️ by Team EcoScan • Powered by Streamlit
