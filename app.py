@@ -5,7 +5,7 @@ import plotly.express as px
 import requests
 
 # ----------------- CONFIG -----------------
-GEMINI_API_KEY = "AIzaSyAQzuDxKGOr89g003wW5H5ROhd5kLy_HcI"  # Your Gemini API key here
+GEMINI_API_KEY = "AIzaSyBh8gAMYwrJRwRXsC8fAJWepz53RrDtW3c"  # Your Gemini API key here
 GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
 
 # ----------------- PAGE SETTINGS -----------------
