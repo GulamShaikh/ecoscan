@@ -6,7 +6,7 @@ import requests
 
 # ----------------- CONFIG -----------------
 GEMINI_API_KEY = "AIzaSyBh8gAMYwrJRwRXsC8fAJWepz53RrDtW3c"  # Your Gemini API key here
-GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
+GEMINI_API_URL = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key={GEMINI_API_KEY}"
 
 # ----------------- PAGE SETTINGS -----------------
 st.set_page_config(page_title="EcoScan", page_icon="🌿", layout="wide")
